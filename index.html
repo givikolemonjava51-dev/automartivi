@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ავტომარტივი დიზაინ ბორდი</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23e0263a'/%3E%3Cpath d='M8 21v-6l2.6-5.5h10.8L24 15v6M7 21h18v3H7z' fill='none' stroke='white' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wdth,wght@62.5..100,400..800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="auth" class="auth" hidden>
+  <form class="auth-card" id="auth-form" novalidate>
+    <div class="mark big" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V11l2-4.5h10L19 11v5"/><path d="M4 16h16v2.5H4z"/><circle cx="8" cy="13" r="1"/><circle cx="16" cy="13" r="1"/></svg></div>
+    <h1 id="auth-title">შესვლა</h1>
+    <p class="auth-sub" id="auth-sub">ავტომარტივის დიზაინ ბორდი გუნდისთვის</p>
+    <label for="auth-email">ელფოსტა</label>
+    <input id="auth-email" type="email" autocomplete="email" required>
+    <label for="auth-pass">პაროლი</label>
+    <input id="auth-pass" type="password" autocomplete="current-password" minlength="6" required>
+    <div class="auth-err" id="auth-err" role="alert" hidden></div>
+    <button class="btn primary" id="auth-submit" type="submit">შესვლა</button>
+    <button class="linkish" id="auth-switch" type="button">ანგარიში არ გაქვს? რეგისტრაცია</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+<header class="top">
+  <div class="brand">
+    <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16V11l2-4.5h10L19 11v5"/><path d="M4 16h16v2.5H4z"/><circle cx="8" cy="13" r="1"/><circle cx="16" cy="13" r="1"/></svg></div>
+    <div><h1>ავტომარტივი · დიზაინი</h1><small>თასქები, დიზაინები და კომუნიკაცია დიზაინერთან</small></div>
+  </div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-board" aria-selected="true">ბორდი</button>
+    <button class="tab" role="tab" id="tab-news" aria-selected="false">ნიუსები <span class="dot" id="news-dot" hidden>0</span></button>
+    <button class="tab" role="tab" id="tab-chat" aria-selected="false">ჩატი <span class="dot" id="chat-dot" hidden>0</span></button>
+  </div>
+  <div class="grow"></div>
+  <label class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="ძებნა თასქებში" autocomplete="off"></label>
+  <button class="btn primary" id="new-task"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 5v14M5 12h14"/></svg>ახალი თასქი</button>
+  <button class="me-btn" id="me-btn" title="პროფილი და გუნდი" aria-label="პროფილი და გუნდი"></button>
+</header>
+<div id="notice" class="notice" hidden></div>
+<main id="main"></main>
+</div>
+<div id="layer"></div>
+<input type="file" id="file-pick" multiple accept="image/*,application/pdf,video/*" hidden>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
