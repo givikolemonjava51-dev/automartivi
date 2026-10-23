@@ -41,3 +41,21 @@ img{max-width:100%}
 .hist .hist-head h3{margin:0;font-size:19px;font-weight:800;font-stretch:72%;letter-spacing:.01em}
 .hist-toggle{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--accent);color:#fff;white-space:nowrap}
 .hist.closed{padding-block:14px}
+
+/* daily post ideas */
+.ideas{display:flex;flex-direction:column;gap:12px}
+.ideas-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ideas-head h3{margin:0;font-size:19px;font-weight:800;font-stretch:72%}
+.ideas-head .hist-date{color:var(--muted)}
+.ideas-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.idea{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.idea-top{display:flex;align-items:center;gap:8px}
+.idea-n{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:500}
+.idea-fmt{font-size:11.5px;font-weight:700;color:var(--s-review);background:var(--s-review-bg);border-radius:5px;padding:1px 7px}
+.idea-title{font-weight:700;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+.idea-cap{margin:0;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.idea-meta{margin:0;font-size:12.5px;color:var(--muted);line-height:1.5}
+.idea-meta b{color:var(--fg);font-weight:600}
+.idea-act{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:4px}
+.idea-act .src{font-size:12.5px;color:var(--muted)}
+.idea-act .btn{height:30px;font-size:12.5px;padding:0 10px}

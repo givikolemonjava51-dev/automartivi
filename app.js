@@ -15,7 +15,7 @@ const GEOS = { ge: 'საქართველო', world: 'მსოფლი�
 const MAX = CFG.maxFileBytes, MAX_SVG = 2 * 1024 * 1024;
 
 const S = {
-  me: null, email: '', isOwner: false, tasks: [], chat: [], news: [], history: [], newsMeta: null, profiles: {}, members: [],
+  me: null, email: '', isOwner: false, tasks: [], chat: [], news: [], history: [], ideas: [], newsMeta: null, profiles: {}, members: [],
   view: 'board', q: '', open: null, comments: [], designs: [], uploads: [], draftFiles: { task: [], chat: [] },
   quickCol: null, seenChat: 0, seenNews: 0, confirmDel: false, settings: false,
   histOpen: false, nDay: null, nCat: 'all', nSrc: 'all', nGeo: 'all', urlVer: 0
@@ -91,6 +91,7 @@ const DB = {
   async tasks() { const { data, error } = await sb.from('tasks').select('*').order('updated_at', { ascending: false }); if (!error) S.tasks = data; },
   async chat() { const { data, error } = await sb.from('chat').select('*').order('created_at', { ascending: false }).limit(500); if (!error) S.chat = data.reverse(); },
   async news() { const since = new Date(Date.now() - 30 * 864e5).toISOString(); const { data, error } = await sb.from('news').select('*').gte('published_at', since).order('published_at', { ascending: false }).limit(1000); if (!error) S.news = data; },
+  async ideas() { const since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10); const { data, error } = await sb.from('ideas').select('*').gte('day', since).order('day', { ascending: false }).order('slot'); if (!error) S.ideas = data; },
   async history() { const { data, error } = await sb.from('history').select('*'); if (!error) S.history = data; },
   async meta() { const { data } = await sb.from('meta').select('*').eq('key', 'news').maybeSingle(); S.newsMeta = data ? data.value : null; },
   async profiles() { const { data, error } = await sb.from('profiles').select('id,name,email'); if (!error) { S.profiles = {}; data.forEach(p => S.profiles[p.id] = p); } },
@@ -280,7 +281,7 @@ function renderChat(main) {
 
 /* ---------- news + on this day ---------- */
 function renderNews(main) {
-  const nsig = JSON.stringify([S.news, S.history, S.newsMeta, S.nDay, S.nCat, S.nSrc, S.nGeo, S.tasks.map(t => t.id)]);
+  const nsig = JSON.stringify([S.ideas, S.news, S.history, S.newsMeta, S.nDay, S.nCat, S.nSrc, S.nGeo, S.tasks.map(t => t.id)]);
   if (main.querySelector('.news-view') && nsig === S._nSig) return; S._nSig = nsig;
   const prevScroll = main.querySelector('.news-view')?.scrollTop || 0;
   const items = S.news.map(n => ({ ...n, day: tbDate(n.published_at) })).filter(n => n.day);
@@ -307,6 +308,7 @@ function renderNews(main) {
   });
   const view = h('div', { class: 'news-view' }, h('div', { class: 'news-inner' },
     h('div', { class: 'news-head' }, h('h2', { text: 'ავტო ნიუსები' }), h('span', { class: 'upd', text: upd })),
+    ideasBlock(S.nDay || t0),
     historyBlock(S.nDay || t0),
     h('div', { class: 'filters' }, h('div', { class: 'seg' }, dayBtn(t0), dayBtn(y0)), dateIn, h('div', { class: 'seg' }, geoBtn('all', 'ყველგან'), geoBtn('ge', 'საქართველო'), geoBtn('world', 'მსოფლიო')), srcSel),
     h('div', { class: 'filters' }, h('div', { class: 'seg' }, segBtn('all', 'ყველა', ofDay.length), Object.entries(CATS).map(([k, v]) => segBtn(k, v, ofDay.filter(n => n.category === k).length)))),
@@ -316,6 +318,30 @@ function renderNews(main) {
     h('div', { class: 'src-note', text: 'ტექსტი და ფოტოები ეკუთვნის წყაროს. გამოიყენე როგორც თემა: დაწერე საკუთარი ტექსტით და ვიზუალით, წყაროს მითითებით.' })));
   main.replaceChildren(view); view.scrollTop = prevScroll;
   const mx = Math.max(0, ...S.news.map(n => ms(n.fetched_at))); if (mx > S.seenNews) { S.seenNews = mx; store('seenNews', mx); }
+}
+function ideasBlock(day) {
+  const list = S.ideas.filter(i => i.day === day).sort((a, b) => a.slot - b.slot);
+  return h('section', { class: 'ideas' },
+    h('div', { class: 'ideas-head' }, h('h3', { text: 'დღის 3 იდეა' }), h('span', { class: 'hist-date', text: dayLabel(day) })),
+    list.length ? h('div', { class: 'ideas-list' }, list.map(i => {
+      const task = i.used_task_id && S.tasks.find(t => t.id === i.used_task_id);
+      return h('article', { class: 'idea' },
+        h('div', { class: 'idea-top' }, h('span', { class: 'idea-n mono', text: i.slot }), i.format ? h('span', { class: 'idea-fmt', text: i.format }) : null),
+        h('div', { class: 'idea-title', text: i.title }),
+        i.caption ? h('p', { class: 'idea-cap', text: i.caption }) : null,
+        i.visual ? h('p', { class: 'idea-meta' }, h('b', { text: 'ვიზუალი: ' }), i.visual) : null,
+        i.why ? h('p', { class: 'idea-meta' }, h('b', { text: 'რატომ: ' }), i.why) : null,
+        h('div', { class: 'idea-act' },
+          i.source_url ? h('a', { href: i.source_url, target: '_blank', rel: 'noopener', class: 'src', text: 'წყარო' }) : h('span'),
+          task ? h('button', { class: 'btn', onclick: () => openTask(task.id) }, 'თასქის ნახვა') : h('button', { class: 'btn primary', onclick: e => fromIdea(i, e.currentTarget) }, icon(I.plus), 'თასქად')));
+    })) : h('div', { class: 'hist-empty', text: day === todayTb() ? 'დღის იდეები ჯერ არ მომზადებულა. ისინი ყოველ დილას ავტომატურად ემატება.' : 'ამ დღისთვის იდეები არ არის.' }));
+}
+async function fromIdea(i, btn) {
+  btn.disabled = true;
+  const desc = [i.caption && `ტექსტის იდეა:\n${i.caption}`, i.visual && `ვიზუალი: ${i.visual}`, i.why && `რატომ: ${i.why}`, i.source_url && `წყარო: ${i.source_url}`].filter(Boolean).join('\n\n');
+  const t = await createTask({ title: i.title, status: 'doing', description: desc });
+  if (!t) { btn.disabled = false; return; }
+  await sb.from('ideas').update({ used_task_id: t.id }).eq('id', i.id); reload('ideas'); toast('თასქი დაემატა „მზადდება“-ში');
 }
 function historyBlock(day) {
   const md = day.slice(5); const x = new Date(day + 'T00:00'); const label = x.getDate() + ' ' + MONTHS_FULL[x.getMonth()]; const yr = +day.slice(0, 4);
@@ -549,7 +575,7 @@ async function boot(session) {
   S.seenChat = +store('seenChat') || 0; S.seenNews = +store('seenNews') || 0;
   $('#auth').hidden = true; $('#app').hidden = false;
   $('#main').replaceChildren(h('div', { class: 'empty-board' }, h('div', { class: 'spin' }), h('p', { text: 'დაფა იტვირთება…' })));
-  await Promise.all([DB.tasks(), DB.chat(), DB.news(), DB.history(), DB.meta(), DB.profiles()]);
+  await Promise.all([DB.tasks(), DB.chat(), DB.news(), DB.ideas(), DB.history(), DB.meta(), DB.profiles()]);
   const hid = location.hash.slice(1); if (hid && S.tasks.find(t => t.id === hid)) openTask(hid); else render();
   if (!(S.profiles[S.me] || {}).name || S.profiles[S.me].name === S.email.split('@')[0]) toast('დააჭირე მარჯვენა ზედა წრეს და ჩაწერე შენი სახელი');
   const ch = sb.channel('board');
@@ -558,6 +584,7 @@ async function boot(session) {
   on('chat', () => reload('chat'));
   on('news', () => reload('news'));
   on('history', () => reload('history'));
+  on('ideas', () => reload('ideas'));
   on('meta', () => reload('meta'));
   on('profiles', () => reload('profiles'));
   on('comments', p => { const t = (p.new && p.new.task_id) || (p.old && p.old.task_id); if (!t || t === S.open) reload('comments'); });
