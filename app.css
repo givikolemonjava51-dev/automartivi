@@ -126,3 +126,15 @@ img{max-width:100%}
 .role-owner{color:var(--accent);background:var(--accent-soft)}
 .role-designer{color:var(--s-review);background:var(--s-review-bg)}
 .role-member{color:var(--s-done);background:var(--s-done-bg)}
+
+/* readable comment box + description: grow with the text, send bar under the text */
+.composer{border:1.5px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.composer:focus-within{border-color:var(--accent)}
+.composer textarea{min-height:96px;max-height:50vh;font-size:15px;line-height:1.6;padding:14px 16px 10px;color:var(--fg);resize:none;white-space:pre-wrap}
+.composer textarea::placeholder{color:var(--muted)}
+.composer .bar{border-top:1px solid var(--line);padding:8px 10px;background:var(--bg)}
+.composer .chips{padding:0 14px 10px}
+.desc{min-height:110px;max-height:50vh;font-size:15px;line-height:1.65;padding:14px 16px;resize:none;background:var(--surface);border:1.5px solid var(--line);border-radius:14px}
+.desc:focus{border-color:var(--accent)}
+.msg-text{font-size:14.5px;line-height:1.6}
+.msg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}

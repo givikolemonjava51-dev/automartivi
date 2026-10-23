@@ -56,6 +56,7 @@ const fmtTime = t => { const d = tbDate(t); if (!d) return ''; const x = new Dat
   return (d === todayTb() ? 'დღეს' : x.getDate() + ' ' + MONTHS[x.getMonth()]) + ' ' + tbTime(t); };
 const dayLabel = d => { const t = todayTb(); const y = tbDate(Date.now() - 864e5); if (d === t) return 'დღეს'; if (d === y) return 'გუშინ'; const x = new Date(d + 'T00:00'); return x.getDate() + ' ' + MONTHS[x.getMonth()]; };
 let toastT; const toast = m => { document.querySelectorAll('.toast').forEach(e => e.remove()); const t = h('div', { class: 'toast', role: 'status', text: m }); document.body.append(t); clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 3400); };
+const grow = el => { if (!el || !el.isConnected) return; el.style.height = 'auto'; const max = Math.round(window.innerHeight * 0.5); el.style.height = Math.min(max, el.scrollHeight + 2) + 'px'; el.style.overflowY = el.scrollHeight > max ? 'auto' : 'hidden'; };
 const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
 const safeName = n => (n || 'file').normalize('NFKD').replace(/[^\w.\-]+/g, '_').replace(/_+/g, '_').slice(-80) || 'file';
@@ -187,6 +188,7 @@ function renderDrawer() {
   const pSel = h('select', { id: 'd-prio' }, h('option', { value: '' }, '—'), Object.entries(PRIOS).map(([k, v]) => h('option', { value: k, selected: t.prio === k }, v))); pSel.addEventListener('change', () => patch(t.id, { prio: pSel.value }));
   const due = h('input', { type: 'date', id: 'd-due', value: t.due || '' }); due.addEventListener('change', () => patch(t.id, { due: due.value || null }));
   const desc = h('textarea', { class: 'desc', id: 'd-desc', placeholder: 'აღწერა: ზომები, ტექსტი, ფერები, რეფერენსები…' }); desc.value = keep['d-desc'] ?? t.description ?? '';
+  desc.addEventListener('input', () => grow(desc));
   desc.addEventListener('blur', () => { if (desc.value !== (t.description || '')) patch(t.id, { description: desc.value }); });
 
   const zone = h('div', { class: 'drop-zone' },
@@ -216,7 +218,7 @@ function renderDrawer() {
       h('section', { class: 'sec' }, h('div', { class: 'sec-head' }, h('h3', { text: 'კომენტარები' }), h('span', { class: 'count mono', text: S.comments.length })), thread, comp)));
   if (!layer.querySelector('.scrim')) layer.append(h('div', { class: 'scrim', onclick: () => { if (S.settings) closeSettings(); else closeTask(); } }));
   if (dr) dr.replaceWith(newDr); else layer.append(newDr);
-  fit(); newDr.querySelector('.d-scroll').scrollTop = prevScroll;
+  fit(); grow(desc); newDr.querySelector('.d-scroll').scrollTop = prevScroll;
   if (activeId) { const e = document.getElementById(activeId); if (e) { e.focus(); try { e.setSelectionRange(selStart, selStart); } catch (_) { } } }
 }
 
@@ -245,7 +247,8 @@ function composer(kind, kept) {
   const id = 'c-' + kind; const dk = 'draft-' + kind + (kind === 'task' ? S.open : '');
   const ta = h('textarea', { id, rows: 2, placeholder: kind === 'task' ? 'დაწერე კომენტარი… (Ctrl+Enter გაგზავნა)' : 'დაწერე შეტყობინება… (Ctrl+Enter გაგზავნა)' });
   if (kept != null) ta.value = kept; else { const d = store(dk); if (d) ta.value = d; }
-  ta.addEventListener('input', () => { store(dk, ta.value); ta.style.height = 'auto'; ta.style.height = Math.min(200, ta.scrollHeight) + 'px'; });
+  ta.addEventListener('input', () => { store(dk, ta.value); grow(ta); });
+  requestAnimationFrame(() => grow(ta));
   const send = async btn => {
     const files = S.draftFiles[kind]; if (files.some(f => f.uploading)) return toast('დაელოდე ფაილის ატვირთვას');
     const text = ta.value.trim(); if (!text && !files.length) return; btn.disabled = true;
