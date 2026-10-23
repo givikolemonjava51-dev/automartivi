@@ -94,3 +94,24 @@ img{max-width:100%}
   .board-wrap{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
   .toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 }
+
+/* News filters: clear pill chips (დღეს / გუშინ / ყველგან / categories) */
+.filters{gap:10px}
+.seg{background:transparent;padding:0;gap:8px;border-radius:0}
+.seg button{height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);
+  font-size:13.5px;font-weight:700;gap:7px;cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.seg button:hover{border-color:var(--accent)}
+.seg button:active{transform:scale(.97)}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 14px -6px rgba(224,38,58,.7)}
+.seg .n{min-width:20px;height:20px;padding:0 6px;border-radius:999px;display:inline-grid;place-items:center;font-size:11px;opacity:1;
+  background:var(--sunk);color:var(--muted)}
+.seg button[aria-pressed="true"] .n{background:rgba(255,255,255,.22);color:#fff}
+.filters input[type=date],.filters select{height:36px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);
+  padding:0 14px;font-weight:600;font-size:13.5px;cursor:pointer}
+.filters input[type=date]:hover,.filters select:hover{border-color:var(--accent)}
+@media (max-width:640px){
+  .filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-4px;padding:2px 4px}
+  .filters::-webkit-scrollbar{display:none}
+  .seg{flex-wrap:nowrap}
+  .seg button,.filters input[type=date],.filters select{flex:none;height:40px}
+}
