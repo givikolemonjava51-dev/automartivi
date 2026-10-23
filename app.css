@@ -76,3 +76,21 @@ img{max-width:100%}
 :root[data-theme="dark"] .card:hover{border-color:#3a4152}
 :root[data-theme="dark"] .btn.primary{box-shadow:0 0 0 1px rgba(255,70,87,.35),0 6px 18px -6px rgba(255,70,87,.55)}
 :root[data-theme="dark"] .col{background:#10131a}
+
+/* tabs: icons on desktop; on phones a big bottom tab bar */
+.tab .tab-ic{flex:none}
+@media (max-width:640px){
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:35;display:grid;grid-template-columns:1fr 1fr;gap:8px;border-radius:0;
+    background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(0,0,0,.18);
+    padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+  .tab{flex-direction:column;justify-content:center;gap:3px;height:58px;border-radius:14px;font-size:14px;font-weight:700;color:var(--muted);
+    background:var(--sunk);border:1px solid var(--line);position:relative}
+  .tab .tab-ic{width:22px;height:22px}
+  .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 6px 18px -6px rgba(224,38,58,.6)}
+  .tab:active{transform:scale(.97)}
+  .tab .dot{position:absolute;top:6px;right:calc(50% - 26px);background:#fff;color:var(--accent);border:2px solid var(--accent)}
+  .tab[aria-selected="false"] .dot{background:var(--accent);color:#fff;border-color:var(--surface)}
+  #app main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .board-wrap{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+}
