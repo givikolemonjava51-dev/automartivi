@@ -115,3 +115,14 @@ img{max-width:100%}
   .seg{flex-wrap:nowrap}
   .seg button,.filters input[type=date],.filters select{flex:none;height:40px}
 }
+
+/* team: add member form + role badges */
+.add-member{display:flex;flex-direction:column;gap:8px;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.add-member input,.add-member select{height:40px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--fg);padding:0 12px;min-width:0}
+.add-member .btn{height:40px;justify-content:center}
+.mrow span{display:flex;flex-direction:column;gap:1px}
+.mrow span small{color:var(--muted)}
+.role{font-weight:700;font-size:11.5px;border-radius:6px;padding:2px 8px;white-space:nowrap}
+.role-owner{color:var(--accent);background:var(--accent-soft)}
+.role-designer{color:var(--s-review);background:var(--s-review-bg)}
+.role-member{color:var(--s-done);background:var(--s-done-bg)}

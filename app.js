@@ -11,6 +11,7 @@ const STATUSES = [
 const stOf = t => STATUSES.some(x => x.id === t.status) ? t.status : 'doing';
 const PRIOS = { high: 'მაღალი', mid: 'საშუალო', low: 'დაბალი' };
 const CATS = { auto: 'ავტომობილები', industry: 'ავტოინდუსტრია', road: 'გზები და მოძრაობა', transport: 'ტრანსპორტი', motorsport: 'მოტორსპორტი' };
+const ROLES = { owner: 'ადმინი', member: 'გუნდის წევრი', designer: 'დიზაინერი' };
 const GEOS = { ge: 'საქართველო', world: 'მსოფლიო' };
 const MAX = CFG.maxFileBytes, MAX_SVG = 2 * 1024 * 1024;
 
@@ -383,14 +384,21 @@ function renderSettings() {
   const nameIn = h('input', { id: 's-name', value: (S.profiles[S.me] || {}).name || '', placeholder: 'შენი სახელი', autocomplete: 'name' });
   const saveName = h('button', { class: 'btn primary', onclick: async () => { const v = nameIn.value.trim(); if (!v) return; const { error } = await sb.from('profiles').update({ name: v }).eq('id', S.me); if (error) return toast(errText(error)); toast('სახელი შეინახა'); reload('profiles'); } }, 'შენახვა');
   const team = h('section', {}, h('h3', { text: 'გუნდი' }),
-    h('div', { class: 'mlist' }, S.members.map(m => h('div', { class: 'mrow' }, h('span', { text: m.email }), h('small', { text: m.role === 'owner' ? 'ადმინი' : 'წევრი' }),
+    h('div', { class: 'mlist' }, S.members.map(m => h('div', { class: 'mrow' }, h('span', {}, m.name ? h('b', { text: m.name + ' ' }) : null, h('small', { text: m.email })), h('small', { class: 'role role-' + m.role, text: ROLES[m.role] || 'წევრი' }),
       S.isOwner && m.role !== 'owner' ? h('button', { class: 'icon-btn', title: 'გუნდიდან ამოშლა', onclick: async () => { const { error } = await sb.from('members').delete().eq('email', m.email); if (error) return toast(errText(error)); reload('members'); } }, icon(I.x)) : null))));
   if (S.isOwner) {
-    const em = h('input', { id: 's-email', type: 'email', placeholder: 'designer@gmail.com', autocomplete: 'off' });
-    const add = async () => { const v = em.value.trim().toLowerCase(); if (!/^\S+@\S+\.\S+$/.test(v)) return toast('ჩაწერე სწორი ელფოსტა'); const { error } = await sb.from('members').insert({ email: v }); if (error) return toast(errText(error)); em.value = ''; toast('დაემატა: ' + v); reload('members'); };
+    const nm = h('input', { id: 's-mname', placeholder: 'სახელი (მაგ. ნინო)', autocomplete: 'off' });
+    const em = h('input', { id: 's-email', type: 'email', placeholder: 'ელფოსტა', autocomplete: 'off' });
+    const rl = h('select', { id: 's-role', 'aria-label': 'როლი' }, h('option', { value: 'member' }, 'გუნდის წევრი'), h('option', { value: 'designer' }, 'დიზაინერი'));
+    const add = async () => {
+      const v = em.value.trim().toLowerCase(); if (!/^\S+@\S+\.\S+$/.test(v)) return toast('ჩაწერე სწორი ელფოსტა');
+      const { error } = await sb.from('members').insert({ email: v, role: rl.value, name: nm.value.trim() });
+      if (error) return toast(/duplicate|unique/i.test(error.message) ? 'ეს ელფოსტა უკვე გუნდშია' : errText(error));
+      em.value = ''; nm.value = ''; toast(`დაემატა: ${v} (${ROLES[rl.value]})`); reload('members');
+    };
     em.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
-    team.append(h('div', { class: 'field', style: 'margin-top:10px' }, em, h('button', { class: 'btn primary', onclick: add }, icon(I.plus), 'დამატება')),
-      h('p', { class: 'hint2', text: 'დაამატე დიზაინერის ელფოსტა, შემდეგ გაუგზავნე საიტის ბმული. ის იმავე ელფოსტით დარეგისტრირდება და დაფას დაინახავს.' }));
+    team.append(h('div', { class: 'add-member' }, h('b', { text: 'ახალი წევრის დამატება' }), nm, em, rl, h('button', { class: 'btn primary', onclick: add }, icon(I.plus), 'დამატება')),
+      h('p', { class: 'hint2', text: 'დაამატე რამდენიც გინდა: გუნდის წევრები და დიზაინერი. შემდეგ თითოეულს გაუგზავნე საიტის ბმული, ის იმავე ელფოსტით დარეგისტრირდება და დაფას დაინახავს. დიზაინერის ატვირთული ფაილი თასქს ავტომატურად „მზადაა“-ში გადაიტანს.' }));
   }
   const panel = h('aside', { class: 'settings', role: 'dialog', 'aria-label': 'პროფილი და გუნდი' },
     h('div', { class: 'd-bar' }, h('b', { text: 'პროფილი და გუნდი' }), h('div', { class: 'grow' }), h('button', { class: 'icon-btn', title: 'დახურვა', onclick: closeSettings }, icon(I.x))),
