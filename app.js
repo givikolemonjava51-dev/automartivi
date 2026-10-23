@@ -294,7 +294,6 @@ function renderNews(main) {
   const segBtn = (id, label, cnt) => h('button', { 'aria-pressed': S.nCat === id, onclick: () => { S.nCat = id; render(); } }, label, h('span', { class: 'n', text: cnt }));
   const dayBtn = d => h('button', { 'aria-pressed': day === d, onclick: () => { S.nDay = d; render(); } }, dayLabel(d), h('span', { class: 'n', text: items.filter(n => n.day === d).length }));
   const dateIn = h('input', { type: 'date', id: 'n-date', value: day, max: t0, 'aria-label': 'თარიღი' }); dateIn.onchange = () => { S.nDay = dateIn.value || null; render(); };
-  const srcSel = h('select', { id: 'n-src', 'aria-label': 'წყარო' }, h('option', { value: 'all' }, 'ყველა წყარო'), sources.map(x => h('option', { value: x, selected: S.nSrc === x }, x))); srcSel.onchange = () => { S.nSrc = srcSel.value; render(); };
   const lr = S.newsMeta && S.newsMeta.lastRun;
   const upd = lr ? `განახლდა ${dayLabel(tbDate(lr))} ${tbTime(lr)}-ზე · ავტომატურად დღეში 3-ჯერ` : 'ავტომატურად ახლდება დღეში 3-ჯერ';
   const rows = list.map(n => {
@@ -309,8 +308,7 @@ function renderNews(main) {
     h('div', { class: 'news-head' }, h('h2', { text: 'ავტო ნიუსები' }), h('span', { class: 'upd', text: upd })),
     ideasBlock(S.nDay || t0),
     historyBlock(S.nDay || t0),
-    h('div', { class: 'filters' }, h('div', { class: 'seg' }, dayBtn(t0), dayBtn(y0)), dateIn, h('div', { class: 'seg' }, geoBtn('all', 'ყველგან'), geoBtn('ge', 'საქართველო'), geoBtn('world', 'მსოფლიო')), srcSel),
-    h('div', { class: 'filters' }, h('div', { class: 'seg' }, segBtn('all', 'ყველა', ofDay.length), Object.entries(CATS).map(([k, v]) => segBtn(k, v, ofDay.filter(n => n.category === k).length)))),
+    h('div', { class: 'filters' }, h('div', { class: 'seg' }, dayBtn(t0), dayBtn(y0)), dateIn, h('div', { class: 'seg' }, geoBtn('all', 'ყველგან'), geoBtn('ge', 'საქართველო'), geoBtn('world', 'მსოფლიო'))),
     rows.length ? h('div', { class: 'nlist' }, rows) : h('div', { class: 'nlist' }, h('div', { class: 'nempty' },
       h('div', { text: day === t0 ? 'დღეს ჯერ ახალი ნიუსი არ გამოქვეყნებულა ამ ფილტრით.' : 'ამ დღეს ამ ფილტრით ნიუსი არ არის.' }),
       day === t0 && days.find(d => d !== t0) ? h('button', { class: 'btn', onclick: () => { S.nDay = days.find(d => d !== t0); render(); } }, 'ბოლო ნიუსების ნახვა') : null)),
