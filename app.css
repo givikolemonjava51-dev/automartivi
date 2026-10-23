@@ -59,3 +59,8 @@ img{max-width:100%}
 .idea-act{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:4px}
 .idea-act .src{font-size:12.5px;color:var(--muted)}
 .idea-act .btn{height:30px;font-size:12.5px;padding:0 10px}
+
+/* ideas box: same collapsed bar as on-this-day, cards stay readable inside */
+.ideas-box{gap:12px}
+.ideas-box .ideas-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.ideas-box .idea{color:var(--fg)}

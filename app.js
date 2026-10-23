@@ -18,7 +18,7 @@ const S = {
   me: null, email: '', isOwner: false, tasks: [], chat: [], news: [], history: [], ideas: [], newsMeta: null, profiles: {}, members: [],
   view: 'board', q: '', open: null, comments: [], designs: [], uploads: [], draftFiles: { task: [], chat: [] },
   quickCol: null, seenChat: 0, seenNews: 0, confirmDel: false, settings: false,
-  histOpen: false, nDay: null, nCat: 'all', nSrc: 'all', nGeo: 'all', urlVer: 0
+  histOpen: false, ideasOpen: false, nDay: null, nCat: 'all', nSrc: 'all', nGeo: 'all', urlVer: 0
 };
 
 const $ = s => document.querySelector(s);
@@ -321,8 +321,12 @@ function renderNews(main) {
 }
 function ideasBlock(day) {
   const list = S.ideas.filter(i => i.day === day).sort((a, b) => a.slot - b.slot);
-  return h('section', { class: 'ideas' },
-    h('div', { class: 'ideas-head' }, h('h3', { text: 'დღის 3 იდეა' }), h('span', { class: 'hist-date', text: dayLabel(day) })),
+  const open = !!S.ideasOpen;
+  const head = h('button', { class: 'hist-head', type: 'button', 'aria-expanded': open, onclick: () => { S.ideasOpen = !S.ideasOpen; S._nSig = null; render(); } },
+    h('h3', { text: 'დღის 3 იდეა' }), h('span', { class: 'hist-date', text: dayLabel(day) }), h('span', { class: 'grow' }),
+    h('span', { class: 'hist-toggle', text: open ? 'დამალვა' : (list.length ? `ნახე იდეები (${list.length})` : 'ნახე იდეები') }));
+  if (!open) return h('section', { class: 'hist ideas-box closed' }, head);
+  return h('section', { class: 'hist ideas-box' }, head,
     list.length ? h('div', { class: 'ideas-list' }, list.map(i => {
       const task = i.used_task_id && S.tasks.find(t => t.id === i.used_task_id);
       return h('article', { class: 'idea' },
