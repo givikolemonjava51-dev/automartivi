@@ -34,3 +34,10 @@ img{max-width:100%}
 .mrow span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mrow small{color:var(--muted)}
 .hint2{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+
+/* on-this-day: collapsed until clicked */
+.hist .hist-head{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;flex-wrap:wrap;width:100%;cursor:pointer;border-radius:8px}
+.hist .hist-head:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.hist .hist-head h3{margin:0;font-size:19px;font-weight:800;font-stretch:72%;letter-spacing:.01em}
+.hist-toggle{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--accent);color:#fff;white-space:nowrap}
+.hist.closed{padding-block:14px}

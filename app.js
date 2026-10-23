@@ -18,7 +18,7 @@ const S = {
   me: null, email: '', isOwner: false, tasks: [], chat: [], news: [], history: [], newsMeta: null, profiles: {}, members: [],
   view: 'board', q: '', open: null, comments: [], designs: [], uploads: [], draftFiles: { task: [], chat: [] },
   quickCol: null, seenChat: 0, seenNews: 0, confirmDel: false, settings: false,
-  nDay: null, nCat: 'all', nSrc: 'all', nGeo: 'all', urlVer: 0
+  histOpen: false, nDay: null, nCat: 'all', nSrc: 'all', nGeo: 'all', urlVer: 0
 };
 
 const $ = s => document.querySelector(s);
@@ -320,8 +320,12 @@ function renderNews(main) {
 function historyBlock(day) {
   const md = day.slice(5); const x = new Date(day + 'T00:00'); const label = x.getDate() + ' ' + MONTHS_FULL[x.getMonth()]; const yr = +day.slice(0, 4);
   const ev = S.history.filter(e => e.md === md).sort((a, b) => a.year - b.year);
-  return h('section', { class: 'hist' },
-    h('div', { class: 'hist-head' }, h('h3', { text: 'წლების წინ ამ დღეს' }), h('span', { class: 'hist-date', text: label })),
+  const open = !!S.histOpen;
+  const head = h('button', { class: 'hist-head', type: 'button', 'aria-expanded': open, onclick: () => { S.histOpen = !S.histOpen; S._nSig = null; render(); } },
+    h('h3', { text: 'წლების წინ ამ დღეს' }), h('span', { class: 'hist-date', text: label }), h('span', { class: 'grow' }),
+    h('span', { class: 'hist-toggle', text: open ? 'დამალვა' : (ev.length ? `ნახე, რა მოხდა (${ev.length})` : 'ნახე, რა მოხდა') }));
+  if (!open) return h('section', { class: 'hist closed' }, head);
+  return h('section', { class: 'hist' }, head,
     ev.length ? h('div', { class: 'hist-list' }, ev.map(e => {
       const task = e.used_task_id && S.tasks.find(t => t.id === e.used_task_id);
       return h('article', { class: 'hcard' },
