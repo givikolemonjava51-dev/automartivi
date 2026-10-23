@@ -558,9 +558,18 @@ $('#auth-form').addEventListener('submit', async e => {
       const { error } = await sb.auth.signInWithPassword({ email, password });
       if (error) return showAuth(/confirm/i.test(error.message) ? 'ჯერ დაადასტურე ელფოსტა: შეამოწმე მეილი (Spam-იც).' : 'ელფოსტა ან პაროლი არასწორია');
     } else {
-      const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin } });
-      if (error) return showAuth(/registered/i.test(error.message) ? 'ეს ელფოსტა უკვე რეგისტრირებულია, შედი.' : errText(error));
-      if (!data.session) { setMode('in'); return showAuth('ანგარიში შეიქმნა. დაადასტურე ელფოსტა მეილზე მოსული ბმულით და შემდეგ შედი.', true); }
+      // Team members get a confirmed account right away (no confirmation email needed).
+      let res = null;
+      try {
+        const r = await fetch(`${CFG.url}/functions/v1/team-signup`, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: CFG.key }, body: JSON.stringify({ email, password }) });
+        res = await r.json().catch(() => ({ error: 'server' }));
+      } catch (_) { res = { error: 'network' }; }
+      if (res.error === 'not_member') return showAuth('ეს ელფოსტა გუნდში ჯერ არ არის დამატებული. სთხოვე ადმინს, რომ „გუნდი“ განყოფილებაში დაგამატოს, შემდეგ სცადე თავიდან.');
+      if (res.error === 'already_registered') { setMode('in'); return showAuth('ეს ელფოსტა უკვე რეგისტრირებულია. შედი შენი პაროლით.'); }
+      if (res.error === 'weak_password') return showAuth('პაროლი მინიმუმ 6 სიმბოლო უნდა იყოს');
+      if (res.error) return showAuth(res.error === 'network' ? 'ინტერნეტთან კავშირი ვერ მოხერხდა, სცადე თავიდან.' : 'რეგისტრაცია ვერ მოხერხდა, სცადე თავიდან.');
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { setMode('in'); return showAuth('ანგარიში შეიქმნა. ახლა შედი შენი ელფოსტით და პაროლით.', true); }
     }
   } finally { btn.disabled = false; }
 });
