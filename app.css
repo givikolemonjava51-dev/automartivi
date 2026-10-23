@@ -71,7 +71,7 @@ img{max-width:100%}
 :root[data-theme="dark"] .theme-btn .sun{display:block}
 :root[data-theme="dark"] .theme-btn .moon{display:none}
 /* dark: deeper header, red glow on primary actions */
-:root[data-theme="dark"] .top{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px)}
+:root[data-theme="dark"] .top{background:var(--surface)}
 :root[data-theme="dark"] .card{background:var(--surface);border-color:var(--line)}
 :root[data-theme="dark"] .card:hover{border-color:#3a4152}
 :root[data-theme="dark"] .btn.primary{box-shadow:0 0 0 1px rgba(255,70,87,.35),0 6px 18px -6px rgba(255,70,87,.55)}
