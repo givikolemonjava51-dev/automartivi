@@ -527,6 +527,7 @@ $('#tab-chat').onclick = () => { closeTask(true); S.view = 'chat'; render(); };
 $('#tab-news').onclick = () => { closeTask(true); S.view = 'news'; render(); };
 $('#q').addEventListener('input', e => { S.q = e.target.value; render(); });
 $('#new-task').onclick = () => { closeTask(true); S.view = 'board'; S.quickCol = 'doing'; render(); };
+$('#theme-btn').onclick = () => { const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); store('am-theme', n); };
 $('#me-btn').onclick = () => { S.settings = true; reload('members'); render(); };
 
 /* ---------- auth + boot ---------- */

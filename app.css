@@ -1,5 +1,4 @@
 *,*::before,*::after{box-sizing:border-box}
-html{color-scheme:light}
 body{margin:0;font-size:14px;-webkit-font-smoothing:antialiased}
 img{max-width:100%}
 [hidden]{display:none!important}
@@ -64,3 +63,16 @@ img{max-width:100%}
 .ideas-box{gap:12px}
 .ideas-box .ideas-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
 .ideas-box .idea{color:var(--fg)}
+
+/* theme toggle */
+.theme-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:grid;place-items:center;cursor:pointer;padding:0}
+.theme-btn:hover{background:var(--sunk)}
+.theme-btn .sun{display:none}
+:root[data-theme="dark"] .theme-btn .sun{display:block}
+:root[data-theme="dark"] .theme-btn .moon{display:none}
+/* dark: deeper header, red glow on primary actions */
+:root[data-theme="dark"] .top{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px)}
+:root[data-theme="dark"] .card{background:var(--surface);border-color:var(--line)}
+:root[data-theme="dark"] .card:hover{border-color:#3a4152}
+:root[data-theme="dark"] .btn.primary{box-shadow:0 0 0 1px rgba(255,70,87,.35),0 6px 18px -6px rgba(255,70,87,.55)}
+:root[data-theme="dark"] .col{background:#10131a}

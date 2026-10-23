@@ -7,18 +7,21 @@
   --s-todo-bg:#e8eaf0; --s-doing-bg:#f6e9da; --s-review-bg:#e1ebfb; --s-done-bg:#dff3e8;
   --shadow:0 1px 2px rgba(20,24,36,.06),0 8px 24px rgba(20,24,36,.08);
   --scrim:rgba(14,17,25,.45);
+  --panel:#141824; --panel-ink:#f3f4f7; --panel-line:#141824;
   --f-ui:"Noto Sans Georgian",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f121a; --surface:#171b26; --sunk:#0b0d13; --fg:#e8ebf2; --muted:#8e96a8; --line:#262b39;
+  --bg:#0c0e13; --surface:#151922; --sunk:#090b0f; --fg:#e8ebf2; --muted:#8c94a6; --line:#232836;
+  --panel:#151922; --panel-ink:#e8ebf2; --panel-line:#2a303d;
   --accent:#ff4657; --accent-soft:#3a1820; --accent-ink:#ffffff;
   --s-todo:#9aa3b8; --s-doing:#f0a92f; --s-review:#6aa2f5; --s-done:#45c487;
   --s-todo-bg:#232838; --s-doing-bg:#33270f; --s-review-bg:#16253f; --s-done-bg:#14301f;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35); --scrim:rgba(0,0,0,.6);
   color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0f121a; --surface:#171b26; --sunk:#0b0d13; --fg:#e8ebf2; --muted:#8e96a8; --line:#262b39;
+  --bg:#0c0e13; --surface:#151922; --sunk:#090b0f; --fg:#e8ebf2; --muted:#8c94a6; --line:#232836;
+  --panel:#151922; --panel-ink:#e8ebf2; --panel-line:#2a303d;
   --accent:#ff4657; --accent-soft:#3a1820; --accent-ink:#ffffff;
   --s-todo:#9aa3b8; --s-doing:#f0a92f; --s-review:#6aa2f5; --s-done:#45c487;
   --s-todo-bg:#232838; --s-doing-bg:#33270f; --s-review-bg:#16253f; --s-done-bg:#14301f;
@@ -213,12 +216,12 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 .cat-road{color:var(--s-doing);background:var(--s-doing-bg)}
 .cat-transport{color:var(--s-done);background:var(--s-done-bg)}
 .cat-motorsport{color:var(--fg);background:var(--sunk)}
-.hist{border-radius:14px;background:var(--fg);color:var(--bg);padding:16px 16px 18px;display:flex;flex-direction:column;gap:12px}
+.hist{border-radius:14px;background:var(--panel);color:var(--panel-ink);border:1px solid var(--panel-line);padding:16px 16px 18px;display:flex;flex-direction:column;gap:12px}
 .hist-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .hist-head h3{margin:0;font-size:19px;font-weight:800;font-stretch:72%;letter-spacing:.01em}
 .hist-date{font-size:13px;opacity:.7}
 .hist-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
-.hcard{background:color-mix(in srgb,var(--bg) 9%,transparent);border:1px solid color-mix(in srgb,var(--bg) 16%,transparent);border-radius:10px;padding:12px;display:flex;gap:12px;min-width:0}
+.hcard{background:color-mix(in srgb,var(--panel-ink) 6%,transparent);border:1px solid color-mix(in srgb,var(--panel-ink) 12%,transparent);border-radius:10px;padding:12px;display:flex;gap:12px;min-width:0}
 .hyear{display:flex;flex-direction:column;align-items:flex-start;flex:none}
 .hyear b{font-size:24px;font-weight:500;line-height:1;color:var(--accent)}
 .hyear span{font-size:11px;opacity:.65;margin-top:4px;white-space:nowrap}
@@ -227,8 +230,8 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 .hbody p{margin:0;font-size:12.5px;opacity:.8;line-height:1.5}
 .hbody .nmeta{color:inherit;opacity:.9}
 .hbody .src{color:inherit;text-decoration:underline}
-.hbody .btn{height:28px;font-size:12px;padding:0 9px;background:transparent;color:inherit;border-color:color-mix(in srgb,var(--bg) 30%,transparent)}
-.hbody .btn:hover{background:color-mix(in srgb,var(--bg) 14%,transparent)}
+.hbody .btn{height:28px;font-size:12px;padding:0 9px;background:transparent;color:inherit;border-color:color-mix(in srgb,var(--panel-ink) 30%,transparent)}
+.hbody .btn:hover{background:color-mix(in srgb,var(--panel-ink) 14%,transparent)}
 .hist-empty{font-size:13px;opacity:.7}
 .used{font-size:11.5px;font-weight:600;color:var(--s-done)}
 .nact{display:flex;gap:6px}
