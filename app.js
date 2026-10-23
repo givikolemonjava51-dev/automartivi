@@ -25,11 +25,11 @@ const $ = s => document.querySelector(s);
 const h = (tag, attrs = {}, ...kids) => {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
-    if (v == null || v === false) continue;
+    if (v == null || (v === false && !k.startsWith('aria-'))) continue;
     if (k === 'class') e.className = v;
     else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
     else if (k === 'text') e.textContent = v;
-    else e.setAttribute(k, v === true ? '' : v);
+    else e.setAttribute(k, k.startsWith('aria-') ? String(v) : (v === true ? '' : v));
   }
   for (const c of kids.flat()) { if (c == null || c === false) continue; e.append(c instanceof Node ? c : document.createTextNode(String(c))); }
   return e;
