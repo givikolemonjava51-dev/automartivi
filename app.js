@@ -105,12 +105,11 @@ function reload(name) { clearTimeout(reloadT[name]); reloadT[name] = setTimeout(
 /* ---------- render ---------- */
 function render() {
   if ($('#app').hidden) return;
-  $('#tab-board').setAttribute('aria-selected', S.view === 'board'); $('#tab-chat').setAttribute('aria-selected', S.view === 'chat'); $('#tab-news').setAttribute('aria-selected', S.view === 'news');
-  const unread = S.chat.filter(m => ms(m.created_at) > S.seenChat && m.author !== S.me).length; const dot = $('#chat-dot'); dot.hidden = !unread || S.view === 'chat'; dot.textContent = unread;
+  $('#tab-board').setAttribute('aria-selected', S.view === 'board'); $('#tab-news').setAttribute('aria-selected', S.view === 'news');
   const nNew = S.news.filter(n => ms(n.fetched_at) > S.seenNews).length; const nd = $('#news-dot'); nd.hidden = !nNew || S.view === 'news'; nd.textContent = nNew;
   const me = $('#me-btn'); me.textContent = (nameOf(S.me).charAt(0) || '?').toUpperCase(); me.style.background = colorOf(S.me);
   const main = $('#main');
-  if (S.view === 'board') renderBoard(main); else if (S.view === 'news') renderNews(main); else renderChat(main);
+  if (S.view === 'news') renderNews(main); else renderBoard(main);
   renderDrawer(); renderSettings();
 }
 
@@ -523,7 +522,6 @@ document.addEventListener('paste', e => {
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (document.querySelector('.lb')) closeLightbox(); else if (S.settings) closeSettings(); else if (S.open) closeTask(); });
 
 $('#tab-board').onclick = () => { S.view = 'board'; render(); };
-$('#tab-chat').onclick = () => { closeTask(true); S.view = 'chat'; render(); };
 $('#tab-news').onclick = () => { closeTask(true); S.view = 'news'; render(); };
 $('#q').addEventListener('input', e => { S.q = e.target.value; render(); });
 $('#new-task').onclick = () => { closeTask(true); S.view = 'board'; S.quickCol = 'doing'; render(); };
@@ -580,13 +578,12 @@ async function boot(session) {
   S.seenChat = +store('seenChat') || 0; S.seenNews = +store('seenNews') || 0;
   $('#auth').hidden = true; $('#app').hidden = false;
   $('#main').replaceChildren(h('div', { class: 'empty-board' }, h('div', { class: 'spin' }), h('p', { text: 'დაფა იტვირთება…' })));
-  await Promise.all([DB.tasks(), DB.chat(), DB.news(), DB.ideas(), DB.history(), DB.meta(), DB.profiles()]);
+  await Promise.all([DB.tasks(), DB.news(), DB.ideas(), DB.history(), DB.meta(), DB.profiles()]);
   const hid = location.hash.slice(1); if (hid && S.tasks.find(t => t.id === hid)) openTask(hid); else render();
   if (!(S.profiles[S.me] || {}).name || S.profiles[S.me].name === S.email.split('@')[0]) toast('დააჭირე მარჯვენა ზედა წრეს და ჩაწერე შენი სახელი');
   const ch = sb.channel('board');
   const on = (table, fn) => ch.on('postgres_changes', { event: '*', schema: 'public', table }, fn);
   on('tasks', () => reload('tasks'));
-  on('chat', () => reload('chat'));
   on('news', () => reload('news'));
   on('history', () => reload('history'));
   on('ideas', () => reload('ideas'));
@@ -595,7 +592,7 @@ async function boot(session) {
   on('comments', p => { const t = (p.new && p.new.task_id) || (p.old && p.old.task_id); if (!t || t === S.open) reload('comments'); });
   on('designs', p => { const t = (p.new && p.new.task_id) || (p.old && p.old.task_id); if (!t || t === S.open) reload('designs'); });
   ch.subscribe();
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) ['tasks', 'chat', 'news', 'comments', 'designs'].forEach(reload); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) ['tasks', 'news', 'comments', 'designs'].forEach(reload); });
 }
 sb.auth.onAuthStateChange((ev, session) => { if (ev === 'SIGNED_OUT') location.reload(); else if (session) boot(session); });
 sb.auth.getSession().then(({ data }) => boot(data.session));
