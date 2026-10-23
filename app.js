@@ -323,7 +323,7 @@ function ideasBlock(day) {
   const list = S.ideas.filter(i => i.day === day).sort((a, b) => a.slot - b.slot);
   const open = !!S.ideasOpen;
   const head = h('button', { class: 'hist-head', type: 'button', 'aria-expanded': open, onclick: () => { S.ideasOpen = !S.ideasOpen; S._nSig = null; render(); } },
-    h('h3', { text: 'დღის 3 იდეა' }), h('span', { class: 'hist-date', text: dayLabel(day) }), h('span', { class: 'grow' }),
+    h('h3', { text: 'დღის 3 პოსტის იდეა' }), h('span', { class: 'hist-date', text: dayLabel(day) }), h('span', { class: 'grow' }),
     h('span', { class: 'hist-toggle', text: open ? 'დამალვა' : (list.length ? `ნახე იდეები (${list.length})` : 'ნახე იდეები') }));
   if (!open) return h('section', { class: 'hist ideas-box closed' }, head);
   return h('section', { class: 'hist ideas-box' }, head,
